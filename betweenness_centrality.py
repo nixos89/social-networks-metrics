@@ -1,4 +1,3 @@
-""" U ovom modulu je implementirana metrika za izracunavanje ugnjezdenosti cvora. """
 import igraph as ig
 from math import *
 from pprint import pprint as pp
@@ -7,10 +6,10 @@ from pprint import pprint as pp
 
 # g = ig.Graph.Read_Pajek("karate.paj")
 
+# Method example of Berine Hogan-a which calculates BC. This represents normalization
+# of Betweenness Centrality metric:
 
-# Primer metoda od Berine Hogan-a koji racuna BC (promene nacinio
-# Tamas Nepusz) - Ovo predstavlja NORMALIZACIJU Betweenness
-# Centrality metrike:
+
 def betweenness_centralization(g):
     vnum = g.vcount()
     if vnum < 3:
@@ -27,29 +26,31 @@ def compute_d_and_p_matrices(g):
 
 
 def bfs(g, start):
-    """ Ovaj metod implementira pretrazivanje u SIRINU (BFS) algoritam
-        da obidje stablo pocevsi od cvora 'start'.
+    """ This method implemenents Breadth-First-Search (BFS) algorithm to traverse tree begging from "start" vertice. 
 
         Args:
             start: Node from traversing starts
         Params:
-            visited:                Skup cvoreva koji su poseceni prolaskom kroz stablo
-            queue:                  Red opsluzivanja u vidu liste koji cuva cvorove koji u procesu za posecivanje
+            visited:                Set of vertices which are visited during traversal of tree.
+            queue:                  Queue represented as a list which stores vertices which are in traversal process.
             start:                  Pocetni/korenski cvor od kog se zapocinje izvrsavanje BFS algoritma
-            tekuci:                 cvor koji je PRVI 'skinut' sa reda cekanja 'queue'
-            susedi_tekuci_indexes:  lista indeksa susednih cvorova cvora 'tekuci'
-            susedi_tekuci:          VertexSeq, tj. lista koja sadrzi elemente tipa Vertex koji su incidentni sa cvorom 'tekuci'
-            mat_d:                  matrica distanci izmedju 2 razlicita cvora u 'g' grafu
-            mat_p:                  matrica sa brojem najkracih puteva izmedju 2 razlicita cvora u 'g' grafu
+            start:                  Start/root vertice from which execution of BFS algorithm is started.
+            tekuci:                 vertice which has been poped from queue named `queue`
+            susedi_tekuci_indexes:  list of indicies of vertices adjacent to `tekuci` vertice
+            susedi_tekuci:          VertexSeq, tj. list containing elements of Vertex type which are incident to the the `tekuci` vertice
+            mat_d:                  Distance matrix which represents distances between 2 different vertices in 'g' graph
+            mat_p:                  Shortest path numbers matrix which contains number of shortest paths between 2 diffrent nodes in 'g' graph
     """
-    visited = set()  # incijalizacija praznog skupa
+    visited = set()  # initialze empty set
     queue = list()
     visited.add(start)
     queue.append(start)
 
-    while queue != []:  # TESTIRAJ bool(visited) uslov!
-        tekuci = queue.pop(0)  # brise PRVI cvor sa liste 'queue' i vraca isti element
-        susedi_tekuci_indexes = g.neighbors(tekuci)  # vraca listu indeksa susednih cvorova cvora 'tekuci'
+    while queue != []:  # TEST bool(visited) condition!
+        # removes FIRST node from `queue` list and returns same removed element
+        tekuci = queue.pop(0)
+        # returns list of indices of adjacent vertices to 'tekuci' vertice
+        susedi_tekuci_indexes = g.neighbors(tekuci)
         susedi_tekuci = g.vs.select(susedi_tekuci_indexes)
 
         for sused in susedi_tekuci:
@@ -91,15 +92,14 @@ def stampaj_listu(lista):
 
 if __name__ == '__main__':
     g = ig.Graph.Read_Pajek("karate.paj")
-    print "tip 'g' objekta:", type(g)
+    print "type of 'g' object:", type(g)
 
-    # incijalizacija vrednosti elemenata matrice distanci
+    # initializating element values of Distance Matrix
     mat_d = [[0 for cols in range(g.vcount())] for rows in range(g.vcount())]
-    # incijalizacija vrednosti elemenata matrice broja NAJKRACIH puteva
+    # initializing element values of Shortest path numbers matrix
     mat_p = [[0 for edge in range(g.vcount())] for edges in range(g.vcount())]
 
     compute_d_and_p_matrices(g)
-    print "len(mat_d) =", len(mat_d), ", mat_d =", mat_d  # PROVERI na INTERNETU dimenzije matrice DISTANCI !!!!
-    print "len(mat_p) =", len(mat_p), ", mat_p =", mat_p  # PROVERI na INTERNETU dimenzije matrice PUTEVA!!!
-
-    print "Stigao na KRAJ!"
+    print "len(mat_d) =", len(mat_d), ", mat_d =", mat_d
+    print "len(mat_p) =", len(mat_p), ", mat_p =", mat_p
+    print "Reached the end!"
